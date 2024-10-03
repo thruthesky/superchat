@@ -40,11 +40,13 @@ class ValueListView extends StatelessWidget {
         }
 
         if (snapshot.isFetching && snapshot.hasData == false) {
-          return loadingBuilder?.call() ?? const Center(child: CircularProgressIndicator.adaptive());
+          return loadingBuilder?.call() ??
+              const Center(child: CircularProgressIndicator.adaptive());
         }
 
         if (snapshot.hasData && snapshot.docs.isEmpty && !snapshot.hasMore) {
-          return emptyBuilder?.call() ?? const Center(child: Text('Value list is empty'));
+          return emptyBuilder?.call() ??
+              const Center(child: Text('Value list is empty'));
         }
 
         return builder(snapshot, (index) {

@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:superchat/src/user.service.dart';
 
 class ChatService {
   static ChatService? _instance;
@@ -18,8 +19,18 @@ class ChatService {
   /// knowing the databaseURL.
   String? databaseURL;
 
-  init({required String databaseURL}) {
+  bool debug = false;
+
+  init({
+    required String databaseURL,
+    String userCollectionName = 'users',
+    bool debug = false,
+  }) {
     this.databaseURL = databaseURL;
+    this.debug = debug;
+    UserService.instance.init(
+      collectionName: userCollectionName,
+    );
     initialized = true;
   }
 

@@ -1,13 +1,16 @@
 name: superchat
 description: "Complete, customizable, and highly scalable chat package"
-version: 0.0.2
+version: 0.0.6
 homepage: https://github.com/thruthesky/superchat
 
 environment:
-  sdk: ^3.5.3
+  sdk: ">=3.0.0 <4.0.0"
   flutter: ">=1.17.0"
 
 dependencies:
+  cloud_firestore: 4.17.3
+  cloud_firestore_platform_interface: 6.2.3
+  cloud_firestore_web: 3.12.3
   firebase_auth: 4.19.5
   firebase_auth_platform_interface: 7.2.6
   firebase_auth_web: 5.11.5

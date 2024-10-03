@@ -126,13 +126,13 @@ class ChatRoom {
       name: json[field.name] ?? '',
       description: json[field.description] ?? '',
       iconUrl: json[field.iconUrl],
-      open: json[field.open],
-      single: json[field.single],
-      group: json[field.group],
+      open: json[field.open] ?? false,
+      single: json[field.single] ?? false,
+      group: json[field.group] ?? false,
       users: json[field.users] is Map
           ? Map<String, bool>.from(json[field.users])
           : {},
-      masterUsers: List<String>.from(json[field.masterUsers]),
+      masterUsers: List<String>.from(json[field.masterUsers] ?? []),
       blockedUsers: Map<String, bool>.from(json[field.blockedUsers] ?? {}),
       createdAt: json[field.createdAt] is num
           ? DateTime.fromMillisecondsSinceEpoch(json[field.createdAt])
@@ -144,8 +144,8 @@ class ChatRoom {
           ? DateTime.now()
           : DateTime.fromMillisecondsSinceEpoch(json[field.lastMessageAt]),
       allMembersCanInvite: json[field.allMembersCanInvite] ?? false,
-      gender: json[field.gender],
-      domain: json[field.domain],
+      gender: json[field.gender] ?? '',
+      domain: json[field.domain] ?? '',
     );
   }
 

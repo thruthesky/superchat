@@ -1,5 +1,6 @@
 import 'package:example/firebase_options.dart';
 import 'package:example/screens/chat/chat_room.list.screen.dart';
+import 'package:example/screens/user/profile.screen.dart';
 import 'package:example/screens/user/sign_in.screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -14,6 +15,7 @@ void main() async {
   ChatService.instance.init(
     /// Provide databaseURL for web
     databaseURL: DefaultFirebaseOptions.currentPlatform.databaseURL!,
+    debug: true,
   );
   runApp(const MyApp());
 }
@@ -61,11 +63,26 @@ class _MyHomePageState extends State<MyHomePage> {
                 builder: (context, snapshot) {
                   final user = FirebaseAuth.instance.currentUser;
                   if (user != null) {
-                    return ElevatedButton(
-                      onPressed: () {
-                        FirebaseAuth.instance.signOut();
-                      },
-                      child: Text('UID: $myUid  Sign out'),
+                    return Column(
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            FirebaseAuth.instance.signOut();
+                          },
+                          child: Text('UID: $myUid  Sign out'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            showGeneralDialog(
+                              context: context,
+                              pageBuilder: (_, __, ___) {
+                                return const ProfileScreen();
+                              },
+                            );
+                          },
+                          child: const Text('Profile'),
+                        )
+                      ],
                     );
                   }
                   return ElevatedButton(
