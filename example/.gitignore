@@ -1,5 +1,11 @@
 firebase_options.dart
 **/firebase_options.dart
+example/android/app/google-services.json
+example/ios/Runner/GoogleService-Info.plist
+
+example/android/app/google-services copy.json
+example/ios/Runner/GoogleService-Info copy.plist
+
 
 
 # Miscellaneous
