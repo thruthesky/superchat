@@ -1,6 +1,6 @@
 name: superchat
 description: "Complete, customizable, and highly scalable chat package"
-version: 0.0.6
+version: 0.0.7
 homepage: https://github.com/thruthesky/superchat
 
 environment:
