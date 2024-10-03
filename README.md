@@ -4,17 +4,15 @@
 - This is designed especially for FlutterFlow developers.
   - If you are looking for a package for Flutter, look for `easychat` package.
 
-
 # Features
 
 # Initialize
-
-
 
 - Call `ChatService.instance.init()` in the `main.dart` in your FlutterFlow project.
   - `databaseURL` must be set to user the realtime database in the web platform.
 
 Example:
+
 ```dart
 import 'package:superchat/superchat.dart';
 
@@ -26,11 +24,9 @@ Future initSuperchat() async {
 }
 ```
 
+# Customize widget
 
-
-
-
-
+Using FF
 
 # Overview
 
@@ -40,19 +36,11 @@ Future initSuperchat() async {
     - simple
     - fast
 
-
-
 # How to
-
-
 
 ## Chat room list custom design
 
-
-
-
 # Widgets
-
 
 ## ValueListView
 
@@ -60,12 +48,12 @@ Future initSuperchat() async {
 - If you don't call `fetchMore(index)`, it will only fetch the first page of data.
 - If you want to get only the first page of list to show the latest or the oldest, you don't have to call `fetchMore`.
 
-
 - In this example, it is using `PageView` to list the data. You can use `ListView`, `GridView`, `CarouselView`, or even `Column`, `Row`, or whatever.
 
 - Use `reverseQuery` to show the oldest data first.
 
 Example:
+
 ```dart
 ValueListView(
   query: FirebaseDatabase.instance.ref('/tmp'),
