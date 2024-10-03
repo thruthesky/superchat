@@ -1,3 +1,6 @@
+## 0.0.6
+* Add. Mirror firestore user data to database.
+
 ## 0.0.5
 * Fix. Chat room model.
 
