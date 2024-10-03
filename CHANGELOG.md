@@ -1,3 +1,6 @@
+## 0.0.8
+* Bump
+
 ## 0.0.6
 * Add. Mirror firestore user data to database.
 
