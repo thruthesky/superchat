@@ -10,6 +10,7 @@
 # Initialize
 
 
+
 - Call `ChatService.init()` in the `main.dart` custom code in your FlutterFlow project.
   - `databaseURL` must be set to user the realtime database in the web platform.
 

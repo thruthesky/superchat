@@ -1,21 +1,15 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:superchat/src/models/chat.room.dart';
 
 import 'package:superchat/superchat.dart';
 
 class ChatRoomListView extends StatefulWidget {
   const ChatRoomListView({
     super.key,
-    this.width,
-    this.height,
     this.single,
     this.group,
     this.open,
   });
-
-  final double? width;
-  final double? height;
 
   final bool? single;
   final bool? group;
