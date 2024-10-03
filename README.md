@@ -11,17 +11,27 @@
 
 
 
-- Call `ChatService.init()` in the `main.dart` custom code in your FlutterFlow project.
+- Call `ChatService.instance.init()` in the `main.dart` in your FlutterFlow project.
   - `databaseURL` must be set to user the realtime database in the web platform.
 
-
+Example:
 ```dart
-/// Initialize super chat service
-ChatService.instance.init(
+import 'package:superchat/superchat.dart';
+
+Future initSuperchat() async {
+  ChatService.instance.init(
     /// Provide databaseURL for web
-    databaseURL: DefaultFirebaseOptions.currentPlatform.databaseURL!,
-);
+    databaseURL: "https://firebase-database-url.com",
+  );
+}
 ```
+
+
+
+
+
+
+
 # Overview
 
 - This package users the realtime database.

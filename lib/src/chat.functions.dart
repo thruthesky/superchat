@@ -42,6 +42,7 @@ DatabaseReference roomRef(String roomId) {
 /// Print log message with emoji 🐶
 void dog(dynamic msg, {int level = 0}) {
   if (kReleaseMode) return;
+  if (ChatService.instance.debug == false) return;
   log('--> ${msg.toString()}', time: DateTime.now(), name: '🐶', level: level);
 }
 
