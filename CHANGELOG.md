@@ -1,3 +1,5 @@
+## 0.0.11
+* Bump to 11
 
 ## 0.0.10
 * Fix. Mirror firestore user data to database.
