@@ -1,6 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:superchat/src/user.service.dart';
+import 'package:superchat/src/users/user.service.dart';
 
 class ChatService {
   static ChatService? _instance;
