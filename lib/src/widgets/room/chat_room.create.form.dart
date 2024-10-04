@@ -1,5 +1,8 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:superchat/src/models/chat.join.dart';
 import 'package:superchat/src/models/chat.room.dart';
+import 'package:superchat/superchat.dart';
 
 class ChatRoomCreateForm extends StatefulWidget {
   const ChatRoomCreateForm({super.key, this.onCreate});
@@ -43,11 +46,23 @@ class _ChatRoomCreateFormState extends State<ChatRoomCreateForm> {
             }),
         ElevatedButton(
           onPressed: () async {
-            await ChatRoom.create(
+            final chatRef = await ChatRoom.create(
               name: nameController.text,
               description: descriptionController.text,
               open: open,
             );
+
+            final chatRoomDoc = await FirebaseDatabase.instance
+                .ref()
+                .child('chat')
+                .child('rooms')
+                .child(chatRef.key!)
+                .get();
+            final chatRoom = ChatRoom.fromSnapshot(chatRoomDoc);
+
+            // TODO, do somewhere else
+            await ChatService.instance.join(chatRoom);
+
             widget.onCreate?.call();
           },
           child: const Text('Create'),

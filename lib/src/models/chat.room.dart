@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:firebase_database/firebase_database.dart';
+import 'package:superchat/src/models/chat.join.dart';
 import 'package:superchat/superchat.dart';
 
 class ChatRoom {
@@ -229,7 +230,6 @@ class ChatRoom {
     String gender = '',
     String domain = '',
   }) async {
-    // TODO: Should (create and join) be one write upon create?
     if (single == true && (group == true || open == true)) {
       throw 'chat-room-create/single-cannot-be-group-or-open Single chat room cannot be group or open';
     }
@@ -264,6 +264,7 @@ class ChatRoom {
 
     /// Create the chat room. It's update method but it's creating a new chat room.
     await newChatRoomRef.update(newRoom);
+
     return newChatRoomRef;
   }
 

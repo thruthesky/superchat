@@ -101,15 +101,27 @@ class _MyHomePageState extends State<MyHomePage> {
               'Chat room menus:',
             ),
             ElevatedButton(
-                onPressed: () {
-                  showGeneralDialog(
-                    context: context,
-                    pageBuilder: (_, __, ___) {
-                      return const ChatRoomListScreen();
-                    },
-                  );
-                },
-                child: const Text('Chat room list'))
+              onPressed: () {
+                showGeneralDialog(
+                  context: context,
+                  pageBuilder: (_, __, ___) {
+                    return const ChatRoomListScreen();
+                  },
+                );
+              },
+              child: const Text('Chat room list'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                showGeneralDialog(
+                  context: context,
+                  pageBuilder: (_, __, ___) {
+                    return const ChatRoomListScreen();
+                  },
+                );
+              },
+              child: const Text('Chat Invitations'),
+            ),
           ],
         ),
       ),
