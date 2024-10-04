@@ -102,6 +102,7 @@ class UserService {
             if (value is String ||
                 value is int ||
                 value is double ||
+                value is bool ||
                 (value is Object && value is List)) {
               newData[key] = value;
             } else if (value is Object) {
@@ -122,7 +123,7 @@ class UserService {
             }
           }
           print('newData : $newData');
-          data(user.uid).update(newData);
+          data(user.uid).set(newData);
         });
       }
     });

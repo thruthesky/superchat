@@ -1,4 +1,7 @@
 
+## 0.0.10
+* Fix. Mirror firestore user data to database.
+
 ## 0.0.9
 * Bump to 9
 
