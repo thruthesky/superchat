@@ -25,11 +25,13 @@ class ChatService {
     required String databaseURL,
     String userCollectionName = 'users',
     bool debug = false,
+    List<String>? userPrivateFields,
   }) {
     this.databaseURL = databaseURL;
     this.debug = debug;
     UserService.instance.init(
       collectionName: userCollectionName,
+      userPrivateFields: userPrivateFields,
     );
     initialized = true;
   }

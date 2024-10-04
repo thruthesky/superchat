@@ -14,18 +14,19 @@ class UserService {
   String collectionName = 'users';
 
   /// List of private fields that should not be synced to the database
-  List<String>? _privateFields;
+  List<String>? _userPrivateFields;
 
   /// Default private fields
   List<String> defaultPrivateFields = ['email', 'phone_number'];
 
   init({
     required String collectionName,
-    List<String>? privateFields,
+    List<String>? userPrivateFields,
   }) {
     dog('UserService.init: $collectionName');
     this.collectionName = collectionName;
-    _privateFields = privateFields ?? defaultPrivateFields;
+    _userPrivateFields = userPrivateFields ?? defaultPrivateFields;
+    dog(_userPrivateFields);
     mirror();
   }
 
@@ -95,8 +96,7 @@ class UserService {
           for (dynamic key in snapshotData.keys) {
             final value = snapshotData[key];
 
-            if (value == null || _privateFields!.contains(key)) {
-              dog('skipping  $key');
+            if (_userPrivateFields!.contains(key) || value == null) {
               continue;
             }
             if (value is String ||
