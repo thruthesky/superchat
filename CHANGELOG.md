@@ -1,3 +1,9 @@
+## 0.0.12
+* Added Models: ChatInput, ChatJoin, ChatMessage, ChatRoom, UserModel
+* Added Chat Room Widgets: ChatRoomScreen, ChatBubble, ChatRoomDoc, ChatRoomInputBox
+* Updated ChatService methods: join(), showChatRoomScreen(), sendMessage()
+* Initial codes for invitation.
+
 ## 0.0.11
 * Bump to 11
 
