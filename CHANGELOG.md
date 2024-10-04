@@ -1,3 +1,11 @@
+## 0.0.11
+* Bump to 11
+
+## 0.0.10
+* Fix. Mirror firestore user data to database.
+
+## 0.0.9
+* Bump to 9
 
 ## 0.0.8
 * Bump to 8

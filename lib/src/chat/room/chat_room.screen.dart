@@ -1,0 +1,410 @@
+import 'dart:async';
+
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:superchat/src/models/chat.join.dart';
+import 'package:superchat/src/widgets/room/chat.messages.list_view.dart';
+import 'package:superchat/src/widgets/room/chat.room.input_box.dart';
+import 'package:superchat/superchat.dart';
+
+/// Chat room screen
+///
+class ChatRoomScreen extends StatefulWidget {
+  const ChatRoomScreen({
+    super.key,
+    this.room,
+    // TODO user
+    this.user,
+    this.join,
+  }) : assert(room != null || user != null || join != null);
+
+  final ChatRoom? room;
+  // TODO use User?
+  // final User? user;
+  final Object? user;
+  final ChatJoin? join;
+
+  @override
+  State<ChatRoomScreen> createState() => _ChatRoomScreenState();
+}
+
+class _ChatRoomScreenState extends State<ChatRoomScreen> {
+  ChatRoom? room;
+  // TODO use User
+  // User? user;
+  Object? user;
+
+  StreamSubscription? resetMessageCountSubscription;
+  StreamSubscription? usersSubscription;
+
+// TODO delete This is simply used to get uid of the invited user for the mean time
+  final uidController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    room = widget.room;
+    user = widget.user;
+    init();
+  }
+
+  init() async {
+    // 1. Prepare room
+    if (room == null) {
+      // Create chat room if user is set.
+      // This will load room either from widget.join or from widget.user.uid
+      // Reimplement
+      await loadRoomOrCreateSingleChatRoom();
+      setState(() {});
+    }
+    // 2. Prepare other user
+    // TODO User Chat ROom
+    // if (user == null && isSingleChatRoom(widget.join?.roomId ?? room!.id)) {
+    //   user = await User.get(
+    //       getOtherUserUidFromRoomId(widget.join?.roomId ?? room!.id)!);
+    //   setState(() {});
+    // }
+    await onRoomReady();
+  }
+
+  Future<void> join() async {
+    // await ChatService.instance.join(room!);
+    await ChatService.instance.join(room!);
+    if (!mounted) return;
+    setState(() {});
+  }
+
+  /// Do something when the room is ready
+  /// The "room ready" means that the room is existing or created, and loaded.
+  onRoomReady() async {
+    if (room!.blockedUids.contains(myUid!)) {
+      Navigator.of(context).pop();
+      dog("The user cannot join the chat room because the user is blocked.");
+      throw ChatException(
+        "fail-join-blocked",
+        "failed to join in the chat room, because the user is blocked",
+      );
+    }
+
+    // This has problem:
+    // If the room is just created, it will still join here.
+
+    // Current user automatically joins upon viewing open rooms.
+    // NOTE: room.joined is only based on `/chat/room/` user
+    //       might not be joined yet based on `/chat/join/`
+    if (room!.joined == false && room!.open) {
+      await join();
+    }
+
+    // If current user is one of the user in the single chat room, can join
+    if (room!.joined == false &&
+        room!.single &&
+        room!.id.split(chatRoomDivider).contains(myUid!)) {
+      await join();
+    }
+
+    // If user is still not joined until this point,
+    // must check if invited, or else user cannot see the room.
+    if (room!.joined == false) {
+      // TODO reimplement
+      // final invitation = await ChatService.instance.getInvitation(room!.id);
+      // final rejection = await ChatService.instance.getRejection(room!.id);
+      // if (invitation != null || rejection != null) {
+      //   await join();
+      // } else {
+      if (!mounted) return;
+      Navigator.of(context).pop();
+      dog("The user cannot join the chat room because the user is not invited.");
+      throw ChatException(
+        "fail-join-no-invitation",
+        "failed to join in the chat room, because the user is not invited",
+      );
+      // }
+    }
+
+    // Listeners
+    listenToUsersUpdate();
+    listenToUnreadMessageCountUpdate();
+  }
+
+  /// To have real time updates for users
+  /// This is related to sending message, auto invitation logics
+  void listenToUsersUpdate() {
+    usersSubscription = room!.ref.child("users").onValue.listen((e) {
+      room!.users = Map<String, bool>.from(e.snapshot.value as Map);
+      // THIS WILL NOT WORK if the user is looking at the drawer
+      // This should be handled by Security
+      // if (room!.userUids.contains(myUid!) == false && mounted) {
+      //   Navigator.of(context).pop();
+      //   dog("The user is no longer a member. Check if the user is just blocked or kicked out.");
+      //   throw ChatException(
+      //     "removed-from-chat",
+      //     "removed from the chat".t,
+      //   );
+      // }
+    });
+  }
+
+  /// Listen to the login user's chat room for the updates of unread message count.
+  ///
+  /// Why:
+  /// - To reset the unread message count
+  /// - To re-render the chat room in list view.
+  ///
+  /// What:
+  /// - The listener will be triggered once when the user enters the room. If there is new message,
+  ///  then, reset it.
+  /// - Since the user is inside the room, the unread message count should be reset.
+  void listenToUnreadMessageCountUpdate() {
+    // TODO reimplement
+    // resetMessageCountSubscription = ChatService.instance
+    //     .unreadMessageCountRef(room!.id)
+    //     .onValue
+    //     .listen((e) async {
+    //   final newMessageCount = (e.snapshot.value ?? 0) as int;
+    //   if (newMessageCount == 0) return;
+    //   await ChatService.instance.resetUnreadMessage(room!);
+    // });
+  }
+
+  @override
+  dispose() {
+    resetMessageCountSubscription?.cancel();
+    usersSubscription?.cancel();
+    super.dispose();
+  }
+
+  /// To load Room using the Id
+  ///
+  /// Load room using the room id from ChatJoin or using other user uid
+  ///
+  /// Join or User must be provided or else it will throw a null error
+  /// It is already handled by assert on constructor
+  // TODO reimplement
+  Future<void> loadRoomOrCreateSingleChatRoom() async {
+    // TODO make it back
+    // room =
+    //     await ChatRoom.get(widget.join?.roomId ?? singleChatRoomId(user!.uid));
+    room = await ChatRoom.get(widget.join!.roomId);
+    if (room != null) return;
+    // final newRoomRef = await ChatRoom.createSingle(user!.uid);
+    // room = await ChatRoom.get(newRoomRef.key!);
+    // await ChatService.instance.join(
+    //   room!,
+    //   protocol: ChatProtocol.invitationNotSent,
+    // );
+    // `room!.users[myUid!] = true` is added to prevent the join
+    // if user is not joined yet and can join the room.
+    //
+    // To understand, check the function `onRoomReady`.
+    // It auto joins the user if user is not a member based on
+    // `chat/room`. Since Chat Room is just created and user was
+    // not in ChatRoom's users field yet, it may join again.
+    //
+    // Why we still need it: Because auto joins will send a different protocol.
+    //                       It should display "Invitation not sent yet".
+    //                       It will be removed by auto joins' protocol,
+    //                       "You joined the room".
+    room!.users[myUid!] = true;
+  }
+
+  /// Returns true if the login user can view the chat messages.
+  ///
+  /// It check if
+  /// - the user has already joined the chat room,
+  ///   -- the user must joined the room even if it's open chat.
+  /// - room is null (which means there is no room yet) and
+  ///   user is not null (which means the room will be created when
+  ///   sent the first message)
+  ///
+  bool get joined => room?.joined == true;
+
+  @override
+  Widget build(BuildContext context) {
+    // * Note, scaffold will be displayed before room is ready.
+    return Scaffold(
+      appBar: AppBar(
+        title: Row(
+          children: [
+            appBarIcon(),
+            Expanded(
+              // child: Text(roomTitle(room, user?.displayName, widget.join)),
+              child: Text(room?.name ?? ''),
+            ),
+          ],
+        ),
+        actions: [
+          IconButton(
+            onPressed: () async {
+              // TODO insert Uid
+              uidController.text = "";
+              await showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text("Invite User"),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextField(
+                        controller: uidController,
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text("Invite"),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+
+              if (uidController.text.isNotEmpty) {
+                await ChatService.instance
+                    .inviteUser(room!, uidController.text);
+              }
+            },
+            icon: const Icon(Icons.person_add_alt_1),
+          ),
+        ],
+        // TODO reimplement drawer
+        // actions: room == null
+        //     ? null
+        //     : [
+        //         if (ChatService.instance.chatRoomActionButton != null)
+        //           ChatService.instance.chatRoomActionButton!(room!),
+        //         if (joined)
+        //           Builder(
+        //             builder: (context) {
+        //               return DrawerButton(
+        //                 onPressed: () => Scaffold.of(context).openEndDrawer(),
+        //               );
+        //             },
+        //           )
+        //       ],
+      ),
+      // endDrawer: joined
+      //     ? ChatRoomDoc(
+      //         roomId: room!.id,
+      //         // Review because without this, drawer may need to
+      //         // load a bit of time.
+      //         // This will help room to load instantly upon opening the room
+      //         onLoading: ChatRoomMenuDrawer(
+      //           room: room,
+      //           user: user,
+      //         ),
+      //         builder: (room) {
+      //           return ChatRoomMenuDrawer(
+      //             room: room,
+      //             user: user,
+      //           );
+      //         },
+      //       )
+      //     : null,
+      body: room == null
+          ? const Center(child: CircularProgressIndicator.adaptive())
+          : Column(
+              children: [
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    // TODO reimplement List
+                    child: ChatMessagesListView(
+                      room: room!,
+                    ),
+                  ),
+                ),
+                SafeArea(
+                  top: false,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                      10,
+                      0,
+                      10,
+                      0,
+                    ),
+                    // TODO add back the input box
+                    child: ChatRoomInputBox(
+                      room: room!,
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+              ],
+            ),
+    );
+  }
+
+  Widget appBarIcon() {
+    Widget child;
+    if (widget.join != null) {
+      if (widget.join!.single) {
+        child = chatIcon(widget.join?.photoUrl, false);
+      } else {
+        child = chatIcon(widget.join?.iconUrl, true);
+      }
+      // }
+      // else if (user != null) {
+      //   child = GestureDetector(
+      //     child: UserAvatar(
+      //       photoUrl: user!.photoUrl,
+      //       initials: user!.displayName.or(user!.uid),
+      //       size: 36,
+      //       radius: 15,
+      //     ),
+      //     onTap: () => UserService.instance.showPublicProfileScreen(
+      //       context,
+      //       user: user!,
+      //     ),
+      //   );
+    } else {
+      child = chatIcon(widget.room?.iconUrl, true);
+    }
+    return Row(
+      children: [
+        child,
+        const SizedBox(width: 8),
+      ],
+    );
+  }
+
+  Widget chatIcon(String? iconUrl, bool isGroup) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15),
+        color: Theme.of(context).colorScheme.tertiaryContainer,
+      ),
+      width: 36,
+      height: 36,
+      clipBehavior: Clip.hardEdge,
+      child: iconUrl != null && iconUrl.isNotEmpty
+          ? CachedNetworkImage(
+              imageUrl: iconUrl,
+              fit: BoxFit.cover,
+              errorWidget: (context, url, error) {
+                dog("Error with an Image in Chat Room Screen(chat.room.screen.dart): $error");
+                return const Icon(Icons.error);
+              },
+            )
+          : isGroup
+              ? Icon(
+                  Icons.people,
+                  color: Theme.of(context).colorScheme.onTertiaryContainer,
+                )
+              : Center(
+                  child: Text(
+                    getOtherUserUidFromRoomId(widget.join!.roomId)!
+                        .characters
+                        .first
+                        .toUpperCase(),
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          color:
+                              Theme.of(context).colorScheme.onTertiaryContainer,
+                        ),
+                  ),
+                ),
+    );
+  }
+}

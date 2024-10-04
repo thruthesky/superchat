@@ -3,7 +3,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:superchat/src/models/chat.join.dart';
 import 'package:superchat/src/models/chat.message.dart';
-
 import 'package:superchat/src/widgets/room/chat_room.screen.dart';
 import 'package:superchat/superchat.dart';
 
@@ -41,11 +40,13 @@ class ChatService {
     required String databaseURL,
     String userCollectionName = 'users',
     bool debug = false,
+    List<String>? userPrivateFields,
   }) {
     this.databaseURL = databaseURL;
     this.debug = debug;
     UserService.instance.init(
       collectionName: userCollectionName,
+      userPrivateFields: userPrivateFields,
     );
     initialized = true;
   }
