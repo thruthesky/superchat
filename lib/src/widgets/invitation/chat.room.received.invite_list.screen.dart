@@ -1,7 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_ui_database/firebase_ui_database.dart';
 import 'package:flutter/material.dart';
-import 'package:superchat/src/widgets/room/chat.room.doc.dart';
+import 'package:superchat/src/chat/room/chat.room.doc.dart';
 import 'package:superchat/superchat.dart';
 
 class ChatRoomReceivedInviteListScreen extends StatelessWidget {
@@ -11,7 +11,7 @@ class ChatRoomReceivedInviteListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('accept/reject chat requests'),
+          title: const Text('accept/reject chat requests'),
           actions: [
             IconButton(
               onPressed: () {

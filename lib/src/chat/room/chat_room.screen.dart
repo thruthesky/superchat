@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:superchat/src/models/chat.join.dart';
-import 'package:superchat/src/widgets/room/chat.messages.list_view.dart';
-import 'package:superchat/src/widgets/room/chat.room.input_box.dart';
+import 'package:superchat/src/chat/room/chat.messages.list_view.dart';
+import 'package:superchat/src/chat/room/chat.room.input_box.dart';
 import 'package:superchat/superchat.dart';
 
 /// Chat room screen

@@ -3,7 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:superchat/src/models/chat.join.dart';
 import 'package:superchat/src/models/chat.message.dart';
-import 'package:superchat/src/widgets/room/chat_room.screen.dart';
+import 'package:superchat/src/chat/room/chat_room.screen.dart';
 import 'package:superchat/superchat.dart';
 
 class ChatService {
@@ -91,7 +91,7 @@ class ChatService {
       // TODO
       // rejectedUserRef(myUid!).child(room.id).path: null,
       // Add uid in users
-      room.ref.child('users').child(myUid!).path: true,
+      room.ref.child('users').child(myUid).path: true,
       // Add in chat joins
       'chat/joins/$myUid/${room.id}/joinedAt': ServerValue.timestamp,
       // Should be in top in order

@@ -1,7 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:superchat/src/models/chat.join.dart';
-import 'package:superchat/src/widgets/room/chat_room.screen.dart';
+import 'package:superchat/src/chat/room/chat_room.screen.dart';
 
 import 'package:superchat/superchat.dart';
 
