@@ -52,8 +52,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
             },
             child: const Text('Update'),
           ),
+          ElevatedButton(
+            onPressed: () async {
+              await saveWithDummyData();
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Saved with Dummy Data'),
+                ),
+              );
+            },
+            child: const Text('Update with Dummy Data'),
+          ),
         ],
       ),
     );
+  }
+
+  saveWithDummyData() async {
+    final millisecond = DateTime.now().millisecondsSinceEpoch;
+    Map<String, dynamic> dummyData = {
+      'displayName': 'John Doe $millisecond',
+      'photoURL': 'https://picsum.photos/200/300',
+      'email': 'john.doe$millisecond@example.com',
+      'createdAt': Timestamp.now(),
+      'phone_number': '1234567890',
+      'birthday': DateTime.now(),
+      'gender': 'm',
+      'stateMessage': 'Hello, I am John Doe. Its $millisecond',
+      'statePhotoUrl': 'https://picsum.photos/200/300',
+      'array': ['apple1', 'banana1', 'orange1', 'grape1'],
+      'latLng': const GeoPoint(35.6895, 139.6917),
+      'test': {
+        'test1': 'test1',
+        'test2': 'test2',
+        'test3': 'test3',
+      }
+    };
+
+    await UserService.instance.myDoc.set(dummyData, SetOptions(merge: true));
   }
 }

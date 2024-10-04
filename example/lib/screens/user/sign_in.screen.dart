@@ -37,11 +37,17 @@ class _SignInScreenState extends State<SignInScreen> {
           ),
           ElevatedButton(
             onPressed: () async {
-              await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                email: emailController.text,
-                password: passwordController.text,
-              );
-              Navigator.of(context).pop();
+              try {
+                await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                  email: emailController.text,
+                  password: passwordController.text,
+                );
+                Navigator.of(context).pop();
+              } catch (e) {
+                await FirebaseAuth.instance.signInWithEmailAndPassword(
+                    email: emailController.text,
+                    password: passwordController.text);
+              }
             },
             child: const Text('Sign in'),
           ),

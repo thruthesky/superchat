@@ -10,15 +10,22 @@ class UserService {
   static UserService get instance => _instance ??= UserService._();
   UserService._();
 
+  /// Firestore collection name for users
   String collectionName = 'users';
+
+  /// List of private fields that should not be synced to the database
+  List<String>? _privateFields;
+
+  /// Default private fields
+  List<String> defaultPrivateFields = ['email', 'phone_number'];
 
   init({
     required String collectionName,
+    List<String>? privateFields,
   }) {
-    // ignore: avoid_print
-    print('UserService.init: $collectionName');
+    dog('UserService.init: $collectionName');
     this.collectionName = collectionName;
-
+    _privateFields = privateFields ?? defaultPrivateFields;
     mirror();
   }
 
@@ -79,13 +86,43 @@ class UserService {
           if (snapshot.exists == false) {
             return;
           }
+          Map<String, dynamic> newData = {};
 
-          // ignore: avoid_print
           print('Mirror from Firestore to Database');
-          data(user.uid).update({
-            'displayName': snapshot['displayName'],
-            'photoURL': snapshot['photoURL'],
-          });
+          Map<String, dynamic> snapshotData =
+              Map<String, dynamic>.from(snapshot.data() as Map);
+
+          for (dynamic key in snapshotData.keys) {
+            final value = snapshotData[key];
+
+            if (value == null || _privateFields!.contains(key)) {
+              dog('skipping  $key');
+              continue;
+            }
+            if (value is String ||
+                value is int ||
+                value is double ||
+                (value is Object && value is List)) {
+              newData[key] = value;
+            } else if (value is Object) {
+              if (value is Timestamp) {
+                newData[key] = value.millisecondsSinceEpoch;
+              } else if (value is GeoPoint) {
+                final geoPoint = value;
+                newData['latitude'] = geoPoint.latitude;
+                newData['longitude'] = geoPoint.longitude;
+              } else if (value is Map) {
+                dog('key $key is Map');
+                newData[key] = value;
+              } else {
+                dog('key $key is unknown object type');
+              }
+            } else {
+              dog('key $key is unknown type');
+            }
+          }
+          print('newData : $newData');
+          data(user.uid).update(newData);
         });
       }
     });
