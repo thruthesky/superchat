@@ -123,7 +123,7 @@ class UserService {
             }
           }
           print('newData : $newData');
-          data(user.uid).set(newData);
+          data(user.uid).update(newData);
         });
       }
     });

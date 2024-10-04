@@ -71,6 +71,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   saveWithDummyData() async {
     final millisecond = DateTime.now().millisecondsSinceEpoch;
     Map<String, dynamic> dummyData = {
+      'boolean': true,
       'displayName': 'John Doe $millisecond',
       'photoURL': 'https://picsum.photos/200/300',
       'email': 'john.doe$millisecond@example.com',
@@ -89,6 +90,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }
     };
 
-    await UserService.instance.myDoc.set(dummyData, SetOptions(merge: true));
+    await UserService.instance.myDoc.set(dummyData, SetOptions(merge: false));
   }
 }
