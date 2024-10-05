@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/material.dart';
 import 'package:superchat/superchat.dart';
 
 class UserService {
@@ -10,15 +11,23 @@ class UserService {
   static UserService get instance => _instance ??= UserService._();
   UserService._();
 
+  /// Firestore collection name for users
   String collectionName = 'users';
+
+  /// List of private fields that should not be synced to the database
+  List<String>? _userPrivateFields;
+
+  /// Default private fields
+  List<String> defaultPrivateFields = ['email', 'phone_number'];
 
   init({
     required String collectionName,
+    List<String>? userPrivateFields,
   }) {
-    // ignore: avoid_print
-    print('UserService.init: $collectionName');
+    dog('UserService.init: $collectionName');
     this.collectionName = collectionName;
-
+    _userPrivateFields = userPrivateFields ?? defaultPrivateFields;
+    dog(_userPrivateFields);
     mirror();
   }
 
@@ -79,13 +88,43 @@ class UserService {
           if (snapshot.exists == false) {
             return;
           }
+          Map<String, dynamic> newData = {};
 
-          // ignore: avoid_print
           print('Mirror from Firestore to Database');
-          data(user.uid).update({
-            'displayName': snapshot['displayName'],
-            'photoURL': snapshot['photoURL'],
-          });
+          Map<String, dynamic> snapshotData =
+              Map<String, dynamic>.from(snapshot.data() as Map);
+
+          for (dynamic key in snapshotData.keys) {
+            final value = snapshotData[key];
+
+            if (_userPrivateFields!.contains(key) || value == null) {
+              continue;
+            }
+            if (value is String ||
+                value is int ||
+                value is double ||
+                value is bool ||
+                (value is Object && value is List)) {
+              newData[key] = value;
+            } else if (value is Object) {
+              if (value is Timestamp) {
+                newData[key] = value.millisecondsSinceEpoch;
+              } else if (value is GeoPoint) {
+                final geoPoint = value;
+                newData['latitude'] = geoPoint.latitude;
+                newData['longitude'] = geoPoint.longitude;
+              } else if (value is Map) {
+                dog('key $key is Map');
+                newData[key] = value;
+              } else {
+                dog('key $key is unknown object type');
+              }
+            } else {
+              dog('key $key is unknown type');
+            }
+          }
+          debugPrint('newData : $newData');
+          data(user.uid).update(newData);
         });
       }
     });

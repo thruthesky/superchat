@@ -117,3 +117,18 @@ ValueListView(
   emptyBuilder: () => const Text('Empty'),
 ),
 ```
+
+## UserService
+
+### Initialization
+
+When the `ChatService` is initialized, the `UserService` will automatically mirrors the user data into the Realtime database.
+
+```dart
+ChatService.instance.init(
+  userCollectionName: 'users',
+  userPrivateFields: ['email', 'name'],
+);
+```
+
+- `userPrivateFields` is the fields that are not exposed to the public. These fields are excluded in mirroring the user data into the Realtime database.

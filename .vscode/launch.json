@@ -13,6 +13,14 @@
             "program": "lib/main.dart"
         },
         {
+            "name": "iPhone 16 Pro",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "iPhone 16 Pro",
+            "cwd": "example",
+            "program": "lib/main.dart"
+        },
+        {
             "name": "superchat (profile mode)",
             "request": "launch",
             "type": "dart",
