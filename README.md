@@ -4,7 +4,22 @@
 - This is designed especially for FlutterFlow developers.
   - If you are looking for a package for Flutter, look for `easychat` package.
 
+
+- Build a highly scalable chat app
+
+- If you are building a mid-sized chat app, you should not use Firestore simply because it's too expensive.
+
+- Super chat library uses the realtime database which is very cheap and provides a complete chat features with highly customizable UI.
+
+
+
+
+
 # Features
+
+
+- Complete chat features
+
 
 # Initialize
 
